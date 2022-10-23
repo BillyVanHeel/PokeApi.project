@@ -8,8 +8,10 @@ body{
     background-color: rgb(20, 20, 19);
 }
 .Poke-nav{
-    background-color: rgb(201, 36, 15);
-    width: 100%;
+    background-color: rgb(238, 233, 232);
+    width: 99%;
+    padding-bottom: 5px;
+    border: 10px groove rgb(71, 71, 69);
 }
 .search-bar{
     display: flex;
@@ -19,9 +21,22 @@ body{
     border-radius: 5px;
     width: 20%;
     display: flex;
+    font-family: 'pokemon';
+    font-weight: bold;
+    font-size: 15px;
     justify-content: center;
 }
+.poke-button{
+    border-radius: 5px;
+    background-color: rgb(38, 44, 38);
+    color: antiquewhite;
+    padding: 5px;
+    margin-left: 2px;
 
+}
+.poke-button:hover{
+    cursor:pointer;
+}
 #pokedex{
     display: flex;
     justify-content: center;
@@ -53,6 +68,7 @@ body{
     flex-wrap: wrap;
     border-radius: 30px;
     background-color: rgb(87, 85, 85);
+    
     
 }
 .type-box{

@@ -2,6 +2,7 @@ const pokeList = document.createElement("ol");
 pokeList.className = "poke-list";
 document.body.appendChild(pokeList);
 const pokeSearchBar = document.querySelector(".search-bar-bar");
+const pokeSearchButton = document.querySelector('.poke-button');
 POKEDEX_ARRAY = [];
 
 //A continuación, solicitamos los datos de la API, todos ellos.
@@ -11,9 +12,9 @@ function pokePetition() {
     .then((pokeResult) => {
       return pokeResult.results;
     })
+    
     .catch((error) => ("Error accediendo a la Pokédex", error));
 }
-
 //Seguidamente sacamos cada uno de los pokemon
 const getOnePokemon = async (url) => {
   try {
@@ -31,6 +32,7 @@ const getOnePokemon = async (url) => {
   } catch (error) {
     console.log("No se puede acceder a la entrada de este pokémon", url, error);
   }
+ 
 };
 //Estos objetos "pokemon" queremos convertirlos en tarjetas que se muestren en la página. Vamos paso por paso
 //Primero: los poke-tipos:
@@ -53,7 +55,7 @@ const displayTypes = (types, container) => {
 };
 
 //Función para dejar vacía la pokedex. Esto nos hará falta luego
-const clearPokedex = () => (pokeList.innerHTML = "");
+const clearPokedex = () => (pokeList.textContent = "");
 
 //Esto será lo que veremos cuando la pokedex esté vacía
 const displayZeroPokemon = () => {
@@ -158,8 +160,8 @@ const missingno = () => {
 };
 
 //Función del buscador, que mostrará en la pokedex (previamente vaciada) solo los resultados que le pidamos
-const pokeSearch = (value) => {
-   
+const pokeSearch = () => {
+   let value = pokeSearchBar.value.toLowerCase();
     const searchResult = POKEDEX_ARRAY.filter((pokemon) => {
       const matchName = pokemon.name.includes(value);
       const matchType = pokemon.type[0].includes(value);
@@ -170,6 +172,7 @@ const pokeSearch = (value) => {
       return matchName || matchType || matchSecondType;
     });
     if (value.includes("???")) {
+      (pokeList.innerHTML = "");
         missingno();
         zeroP.textContent='';
       }
@@ -179,8 +182,13 @@ const pokeSearch = (value) => {
    
 };
 const addEventsListeners = () => {
-  pokeSearchBar.addEventListener("input", (event) => {
-    pokeSearch(event.target.value);
+  pokeSearchButton.addEventListener("click", () => {
+    pokeSearch();
+  });
+  pokeSearchBar.addEventListener("keypress", (e) => {
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      pokeSearch(); }
   });
 };
 
