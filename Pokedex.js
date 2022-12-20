@@ -2,20 +2,21 @@ const pokeList = document.createElement("ol");
 pokeList.className = "poke-list";
 document.body.appendChild(pokeList);
 const pokeSearchBar = document.querySelector(".search-bar-bar");
-const pokeSearchButton = document.querySelector('.poke-button');
+const pokeSearchButton = document.querySelector(".poke-button");
 POKEDEX_ARRAY = [];
 
-//A continuación, solicitamos los datos de la API, todos ellos.
+//A continuación, solicitamos los datos de la API, y los traemos en un objeto JSON
 function pokePetition() {
   return fetch("https://pokeapi.co/api/v2/pokemon?limit=151")
     .then((pokeResult) => pokeResult.json())
     .then((pokeResult) => {
       return pokeResult.results;
     })
-    
+
     .catch((error) => ("Error accediendo a la Pokédex", error));
 }
-//Seguidamente sacamos cada uno de los pokemon
+//Seguidamente sacamos cada uno de los pokemon. Para ello creamos una función que tome una url como parámetro,
+//le haga fetch y nos devuelva, en un json llamado "pokemon", los datos específicos que le pidamos
 const getOnePokemon = async (url) => {
   try {
     const pokeResponse = await fetch(url);
@@ -32,19 +33,25 @@ const getOnePokemon = async (url) => {
   } catch (error) {
     console.log("No se puede acceder a la entrada de este pokémon", url, error);
   }
- 
 };
+
 //Estos objetos "pokemon" queremos convertirlos en tarjetas que se muestren en la página. Vamos paso por paso
 //Primero: los poke-tipos:
+
+//Dado que algunos pokemon tienen doble tipo, no mostraremos el tipo directamente, sino un div(pokeTypeBox) que
+//contenga los tipos de cada pokemon
 const displayTypes = (types, container) => {
   const pokeTypeBox = document.createElement("div");
   pokeTypeBox.className = "type-box";
 
+  //creamos a continuación un div para cada tipo
   for (const type of types) {
     const pokeDiv = document.createElement("div");
     pokeDiv.setAttribute("Pokemon-type", type);
     pokeDiv.classList.add("type");
     pokeDiv.textContent = type;
+
+    //Y hacemos que, al clicar en cada uno de estos divs, nos busque a todos los de ese tipo
     pokeDiv.addEventListener("click", () => {
       pokeSearchBar.value = type;
       pokeSearch(type);
@@ -54,13 +61,28 @@ const displayTypes = (types, container) => {
   container.appendChild(pokeTypeBox);
 };
 
+//Bajo el input, haremos un div con botones que filtren los pokemon por tipos
+const typeButtonDiv = document.getElementsByClassName("typebuttons");
+const typeButtons = (types) => {
+  for (const type of types) {
+    const pokeDiv = document.createElement("div");
+    pokeDiv.setAttribute("Pokemon-type", type);
+    pokeDiv.classList.add("type");
+    pokeDiv.textContent = type;
+  
+    typeButtonDiv.appendChild(pokeDiv);
+  }
+
+}
+
+
 //Función para dejar vacía la pokedex. Esto nos hará falta luego
 const clearPokedex = () => (pokeList.textContent = "");
 
 //Esto será lo que veremos cuando la pokedex esté vacía
 const displayZeroPokemon = () => {
   const zeroLi = document.createElement("li");
-  
+
   zeroP.classList.add("noPokemonFound");
   zeroP.textContent =
     "Oops! you must have used a repel, cause there are no pokemon here...";
@@ -70,15 +92,18 @@ const displayZeroPokemon = () => {
 };
 const zeroP = document.createElement("p");
 
-//Creamos las tarjetas a partir de los objetos
+//Creamos las tarjetas a partir de estos objetos pokemon. Estas tarjetas serán elementos "li" subordinados a la "ol" pokelist
 function displayPokemonCards(pokeCard) {
   const pokeLi = document.createElement("li");
   pokeLi.className = "poke-li";
 
+  //nombre del pokemon
   const pokeP = document.createElement("p");
   pokeP.textContent = pokeCard.name;
 
+  //imagen del pokemon:
   const pokePic = document.createElement("img");
+  //con esta función, haremos que la source del elemento img tenga una posibilidad de ser la imagen shiny:
   function randomShiny(img) {
     let shiny = Math.floor(Math.random() * 100);
     if (shiny <= 0.5) {
@@ -103,6 +128,7 @@ function displayPokemonCards(pokeCard) {
   //Queremos hacer especial a nuestro escurridizo Mew, así que vamos a darle propiedades particulares
   if (pokeCard.name === "mew") {
     pokeLi.classList.add("mew");
+    //creamos una tarjeta especial con la foto de un camión:
     const truck = document.createElement("div");
     let truckPic = document.createElement("img");
     truckPic.src = "./assets/Mew-Truck.png";
@@ -114,8 +140,10 @@ function displayPokemonCards(pokeCard) {
     truck.appendChild(truckPic);
     truck.appendChild(truckP);
     truck.classList.add("truck");
+    //Y lo subordinamos a la tarjeta de Mew, quedando por encima de esta:
     pokeLi.appendChild(truck);
 
+    //Y con este escuchador, al hacer click, haremos el camión invisible, revelando a Mew
     truck.addEventListener("click", () => {
       truck.style = "visibility:hidden";
     });
@@ -123,6 +151,7 @@ function displayPokemonCards(pokeCard) {
     pokePic.setAttribute("title", "Mew was under the truck");
   }
 
+  //ejecutamos aquí la función randomShiny, declarada arriba
   randomShiny(pokePic);
   pokeLi.appendChild(pokePic);
   pokeLi.appendChild(pokeP);
@@ -141,18 +170,18 @@ const displayPokemon = (Kanto) => {
 };
 
 //Easter-egg de pokemon: Missigno
+//Creamos una tarjeta especial para Missingno, con su imagen(local) y su nombre
 const missingno = () => {
   const missingnoDiv = document.createElement("div");
   missingnoDiv.classList.add("missingno");
 
   let missingnoPic = document.createElement("img");
-  missingnoPic.src="./assets/MissingNo.png";
-  missingnoPic.classList.add('missingno-pic');
+  missingnoPic.src = "./assets/MissingNo.png";
+  missingnoPic.classList.add("missingno-pic");
 
-  const missingnoP = document.createElement('p');
-  missingnoP.textContent = '#/Missingno..:.!';
-  missingnoP.classList.add('missingno-p');
-
+  const missingnoP = document.createElement("p");
+  missingnoP.textContent = "#/Missingno..:.!";
+  missingnoP.classList.add("missingno-p");
 
   missingnoDiv.appendChild(missingnoPic);
   missingnoDiv.appendChild(missingnoP);
@@ -161,34 +190,35 @@ const missingno = () => {
 
 //Función del buscador, que mostrará en la pokedex (previamente vaciada) solo los resultados que le pidamos
 const pokeSearch = () => {
-   let value = pokeSearchBar.value.toLowerCase();
-    const searchResult = POKEDEX_ARRAY.filter((pokemon) => {
-      const matchName = pokemon.name.includes(value);
-      const matchType = pokemon.type[0].includes(value);
-      let matchSecondType = "";
-      if (pokemon.type[1]) {
-        matchSecondType = pokemon.type[1].includes(value);
-      }
-      return matchName || matchType || matchSecondType;
-    });
-    if (value.includes("???")) {
-      (pokeList.innerHTML = "");
-        missingno();
-        zeroP.textContent='';
-      }
-    else{
-     displayPokemon(searchResult);    
+  let value = pokeSearchBar.value.toLowerCase();
+  const searchResult = POKEDEX_ARRAY.filter((pokemon) => {
+    const matchName = pokemon.name.includes(value);
+    const matchType = pokemon.type[0].includes(value);
+    let matchSecondType = "";
+    if (pokemon.type[1]) {
+      matchSecondType = pokemon.type[1].includes(value);
     }
-   
+    return matchName || matchType || matchSecondType;
+  });
+  if (value.includes("???")) {
+    pokeList.textContent = "";
+    missingno();
+    zeroP.textContent = "";
+  } else {
+    displayPokemon(searchResult);
+  }
 };
+
+
 const addEventsListeners = () => {
   pokeSearchButton.addEventListener("click", () => {
     pokeSearch();
   });
   pokeSearchBar.addEventListener("keypress", (e) => {
-    if(e.key === 'Enter'){
+    if (e.key === "Enter") {
       e.preventDefault();
-      pokeSearch(); }
+      pokeSearch();
+    }
   });
 };
 
@@ -205,6 +235,11 @@ async function newGame() {
   }
   console.log(POKEDEX_ARRAY);
   displayPokemon(POKEDEX_ARRAY);
+
+  const arrayNames = POKEDEX_ARRAY.map((item) => {
+    return item.name;
+  });
+  console.log("array de nombres", arrayNames);
 }
 
 //Y lo ejecutamos

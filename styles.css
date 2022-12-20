@@ -65,11 +65,11 @@ body{
     justify-content: space-around;
     align-items: center;
     flex-direction: column;
-    flex-wrap: wrap;
     border-radius: 30px;
-    background-color: rgb(87, 85, 85);
-    
-    
+    background-color: rgb(87, 85, 85);    
+}
+.poke-li:last-child:nth-child(3n - 2){
+    grid-column: span 2;
 }
 .type-box{
     display:flex;
