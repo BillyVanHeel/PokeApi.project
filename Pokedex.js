@@ -3,7 +3,9 @@ pokeList.className = "poke-list";
 document.body.appendChild(pokeList);
 const pokeSearchBar = document.querySelector(".search-bar-bar");
 const pokeSearchButton = document.querySelector(".poke-button");
+let requestInCourse = false;
 POKEDEX_ARRAY = [];
+VIRTUAL_COLLECTION = [];
 TYPE_ARRAY = [
 "fire",
 "water",
@@ -26,8 +28,8 @@ TYPE_ARRAY = [
 ];
 
 //A continuación, solicitamos los datos de la API, y los traemos en un objeto JSON
-function pokePetition() {
-  return fetch("https://pokeapi.co/api/v2/pokemon?limit=151")
+function pokePetition( offset = 0, limit = 150) {
+  return fetch(`https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`)
     .then((pokeResult) => pokeResult.json())
     .then((pokeResult) => {
       return pokeResult.results;
@@ -41,8 +43,9 @@ const getOnePokemon = async (url) => {
   try {
     const pokeResponse = await fetch(url);
     const result = await pokeResponse.json();
+    
 
-    const pokemon = {
+     const pokemon = {
       name: result.name,
       id: result.id,
       type: result.types.map((element) => element.type.name),
@@ -50,6 +53,7 @@ const getOnePokemon = async (url) => {
       image_shiny: result.sprites.front_shiny,
     };
     return pokemon;
+    
   } catch (error) {
     console.log("No se puede acceder a la entrada de este pokémon", url, error);
   }
@@ -194,10 +198,10 @@ function displayPokemonCards(pokeCard) {
 }
 
 //Mostramos cada una de las tarjetas:
-const displayPokemon = (Kanto) => {
+const displayPokemon = (AllPokemon) => {
   clearPokedex();
-  if (!Kanto.length) displayZeroPokemon();
-  for (const pokemon of Kanto) {
+  if (!AllPokemon.length) displayZeroPokemon();
+  for (const pokemon of AllPokemon) {
     displayPokemonCards(pokemon);
   }
 };
@@ -276,6 +280,7 @@ function clearInput(){
 
 let arrayNames = [];
 
+//Acción para lanzar el buscador. O clicando en el botón, o con la tecla enter, respectivamente
 const addEventsListeners = () => {
   pokeSearchButton.addEventListener("click", () => {
     pokeSearch();
@@ -288,15 +293,59 @@ const addEventsListeners = () => {
   });
 };
 
+//Función para dividir por REGIÓN. Solo hasta Unova, porque más allá es cuando la cosa se desmadra
+//Lo primero, definir un objeto de objetos. Cada objeto, una región, la cuál definirá un offset y un limit para la URL
+//Es decir, el primer y el último pokemon pescado de la API
+const regions = {
+  kanto:{offset: 0, limit: 151}, johto:{offset: 151, limit: 100}, hoenn:{offset: 251, limit: 135}, sinnoh:{offset:386, limit: 107}, unova:{offset:493, limit: 155},
+};
+//Y creamos una función que haga fetch de esas regiones
+const fetchPokeReg = async (region) => {
+  if(requestInCourse) return;
+
+  const {limit, offset} = regions[region];
+  POKEDEX_ARRAY = [];
+
+  requestInCourse = true;
+  const allPokemon = await pokePetition(offset, limit);
+
+  for (const pokemon of allPokemon) {
+    const id = pokemon.url.split('/').slice(-2)[0];
+    const exist = VIRTUAL_COLLECTION.find(pokemon => pokemon.id === id);
+    const pokemonInfo = exist ? exist : await getOnePokemon(pokemon.url);
+    if(!exist) VIRTUAL_COLLECTION.push(pokemonInfo);
+    POKEDEX_ARRAY.push(pokemonInfo); 
+  }
+
+  requestInCourse = false;
+  displayPokemon(POKEDEX_ARRAY);
+}
+
+
+function addRegionButtons(regions){
+  const regionsDiv = document.querySelector(".regionDiv");
+  regions.forEach(region =>{
+    const regButton = document.createElement("button");
+    regButton.textContent = region;
+    regButton.classList.add("poke-button"); 
+    regButton.addEventListener("click", () => fetchPokeReg(region));
+    regionsDiv.appendChild(regButton);
+
+    
+  })
+}
+
+
 //Finalmente, aquí invocamos todo lo anterior
-async function newGame() {
+const newGame = async() => {
   console.log(
     "Bienvenido al mundo Pokemon. Soy el profesor Oak, y estos son los pokemon de la región de Kanto:"
   );
 
   addEventsListeners();
-  const Kanto = await pokePetition();
-  for (const pokemon of Kanto) {
+  addRegionButtons(Object.keys(regions));
+   const PokeWorld = await pokePetition();
+  for (const pokemon of PokeWorld) {
     const pokeinfo = await getOnePokemon(pokemon.url);
     POKEDEX_ARRAY.push(pokeinfo);
   }
@@ -308,4 +357,4 @@ async function newGame() {
   });
 }
 //Y lo ejecutamos
-newGame();
+window.onload = newGame;
