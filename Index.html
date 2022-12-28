@@ -4,18 +4,29 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src = 'Pokedex.js' defer></script>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/css/autoComplete.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/x-icon" href="./assets/ultraball.png">
+    
     <title>Poke API</title>
 </head>
 <body>
     <nav class="Poke-nav">
     <h1 id ="pokedex">Welcome to the pokedex of Kanto</h1>
     <h4 id ="poke-title">Search the pokemon you desire:</h4>
-    <form class="search-bar"><input type="text" class="search-bar-bar" placeholder="Please, do not type '???'">
-    <div class="typebuttons"></div>
-    <button type="button" class="poke-button">Catch them All!</button></form> 
+    <div class="search-bar-box">
+    <form class="search-bar" autocomplete="off">
+        <input type="text" class="search-bar-bar" placeholder="Please, do not type '???'">
+        <div id = "pokepossibility">
+        <ul class="pokeAutoList"></ul>
+        </div>
+        </form> 
+        <button type="button" class="poke-button">Catch them All!</button>
+    </div>
+    <ul class="typebuttons"></ul>
+    
     </nav> 
+<script src = 'Pokedex.js' defer></script>
 </body>
 </html>

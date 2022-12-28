@@ -4,6 +4,26 @@ document.body.appendChild(pokeList);
 const pokeSearchBar = document.querySelector(".search-bar-bar");
 const pokeSearchButton = document.querySelector(".poke-button");
 POKEDEX_ARRAY = [];
+TYPE_ARRAY = [
+"fire",
+"water",
+"grass",
+"bug",
+"electric",
+"flying",
+"fighting",
+"ground",
+"normal",
+"poison",
+"psychic",
+"ghost",
+"dark",
+"rock",
+"ice",
+"dragon",
+"steel",
+"fairy",
+];
 
 //A continuación, solicitamos los datos de la API, y los traemos en un objeto JSON
 function pokePetition() {
@@ -34,8 +54,8 @@ const getOnePokemon = async (url) => {
     console.log("No se puede acceder a la entrada de este pokémon", url, error);
   }
 };
-
 //Estos objetos "pokemon" queremos convertirlos en tarjetas que se muestren en la página. Vamos paso por paso
+
 //Primero: los poke-tipos:
 
 //Dado que algunos pokemon tienen doble tipo, no mostraremos el tipo directamente, sino un div(pokeTypeBox) que
@@ -52,30 +72,43 @@ const displayTypes = (types, container) => {
     pokeDiv.textContent = type;
 
     //Y hacemos que, al clicar en cada uno de estos divs, nos busque a todos los de ese tipo
-    pokeDiv.addEventListener("click", () => {
+    function filterType(){
       pokeSearchBar.value = type;
       pokeSearch(type);
-    });
+    }
+    pokeDiv.addEventListener("click", filterType);
     pokeTypeBox.appendChild(pokeDiv);
   }
   container.appendChild(pokeTypeBox);
 };
 
-//Bajo el input, haremos un div con botones que filtren los pokemon por tipos
-const typeButtonDiv = document.getElementsByClassName("typebuttons");
-const typeButtons = (types) => {
-  for (const type of types) {
-    const pokeDiv = document.createElement("div");
-    pokeDiv.setAttribute("Pokemon-type", type);
-    pokeDiv.classList.add("type");
-    pokeDiv.textContent = type;
-  
-    typeButtonDiv.appendChild(pokeDiv);
+//Bajo el input, haremos un div con botones que filtren los pokemon por tipos, empleando el array de tipos de las primeras
+const typeButtonUl = document.querySelector(".typebuttons");
+TYPE_ARRAY.forEach(type => {
+  const typeLi = document.createElement("li");
+  typeLi.setAttribute("Pokemon-type", type);
+  typeLi.classList.add("type");
+  typeLi.textContent = type;
+
+  typeButtonUl.appendChild(typeLi);
+
+  function filterType(){
+    if(pokeSearchBar.value == type){
+      pokeSearchBar.value = "";
+      pokeSearch("");
+    }else{
+    pokeSearchBar.value = type;
+    pokeSearch(type);
+    }
+    
   }
+  
 
-}
+  typeLi.addEventListener("click", filterType);
 
 
+
+});
 //Función para dejar vacía la pokedex. Esto nos hará falta luego
 const clearPokedex = () => (pokeList.textContent = "");
 
@@ -169,6 +202,8 @@ const displayPokemon = (Kanto) => {
   }
 };
 
+
+
 //Easter-egg de pokemon: Missigno
 //Creamos una tarjeta especial para Missingno, con su imagen(local) y su nombre
 const missingno = () => {
@@ -209,6 +244,37 @@ const pokeSearch = () => {
   }
 };
 
+//Función para AUTOCOMPLETAR
+pokeSearchBar.addEventListener("keyup", (e) =>{
+  clearInput()
+  for(let name of arrayNames){
+    if(name.startsWith(pokeSearchBar.value)&& pokeSearchBar.value != ""){
+      let pokeAutoLi = document.createElement("li");
+      pokeAutoLi.classList.add("pokeAutoLi");
+      pokeAutoLi.setAttribute("onclick", "showPokeResults('" + name +"')");
+      let pokeBold = "<b>" + name.substr(0,pokeSearchBar.value.length) + "</b>";
+      pokeBold += name.substr(pokeSearchBar.value.length);
+      pokeAutoLi.innerHTML = pokeBold;
+      document.querySelector(".pokeAutoList").appendChild(pokeAutoLi);
+    }
+  }
+});
+
+function showPokeResults(value){
+  pokeSearchBar.value = value;
+  pokeSearch(value);
+  clearInput();
+}
+
+function clearInput(){
+  let pokeItems = document.querySelectorAll(".pokeAutoLi");
+  pokeItems.forEach((pokeItem) => {
+    pokeItem.remove();
+  });
+}
+
+
+let arrayNames = [];
 
 const addEventsListeners = () => {
   pokeSearchButton.addEventListener("click", () => {
@@ -227,6 +293,7 @@ async function newGame() {
   console.log(
     "Bienvenido al mundo Pokemon. Soy el profesor Oak, y estos son los pokemon de la región de Kanto:"
   );
+
   addEventsListeners();
   const Kanto = await pokePetition();
   for (const pokemon of Kanto) {
@@ -236,11 +303,9 @@ async function newGame() {
   console.log(POKEDEX_ARRAY);
   displayPokemon(POKEDEX_ARRAY);
 
-  const arrayNames = POKEDEX_ARRAY.map((item) => {
+  arrayNames = POKEDEX_ARRAY.map((item) => {
     return item.name;
   });
-  console.log("array de nombres", arrayNames);
 }
-
 //Y lo ejecutamos
 newGame();

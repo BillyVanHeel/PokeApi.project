@@ -6,26 +6,62 @@ body{
     font-family: 'pokemon';
     text-transform: uppercase;
     background-color: rgb(20, 20, 19);
+    position: relative;
 }
 .Poke-nav{
-    background-color: rgb(238, 233, 232);
+    background-color: rgb(119, 119, 119);
     width: 99%;
     padding-bottom: 5px;
     border: 10px groove rgb(71, 71, 69);
+    border-radius: 8px;
+    /* position: relative; */
+}
+.search-bar-box{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
 }
 .search-bar{
     display: flex;
     justify-content: center;
+    flex-direction: column;
 }
 .search-bar-bar{
     border-radius: 5px;
-    width: 20%;
     display: flex;
     font-family: 'pokemon';
     font-weight: bold;
     font-size: 15px;
     justify-content: center;
+   /*  position: relative; */
 }
+#pokepossibility{
+    width: 98%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.pokeAutoList{
+    border-radius: 5px;
+    background-color: #ccc;
+    border: 1px solid #000;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    width: 100%;
+}
+.pokeAutoLi{
+    padding: 5px 0;
+    
+}
+.pokeAutoLi:hover{
+    background: #eee;
+    cursor: pointer;
+}
+
 .poke-button{
     border-radius: 5px;
     background-color: rgb(38, 44, 38);
@@ -41,10 +77,12 @@ body{
     display: flex;
     justify-content: center;
     padding-top: 20px;
+    text-shadow: 3px 2px 2px #2c2c2c;
 }
 #poke-title{
     display: flex;
     justify-content: center;
+    text-shadow: 3px 2px 2px #2c2c2c;
 }
 .shiny{
     background-color: rgb(132, 133, 71);
@@ -57,6 +95,7 @@ body{
     justify-content: center;
     flex-wrap: wrap;
     margin-top: 200px;
+    position: relative;
 }
 .poke-li{
     display: flex;
@@ -66,10 +105,9 @@ body{
     align-items: center;
     flex-direction: column;
     border-radius: 30px;
-    background-color: rgb(87, 85, 85);    
-}
-.poke-li:last-child:nth-child(3n - 2){
-    grid-column: span 2;
+    background-color: rgb(87, 85, 85); 
+    box-shadow: -17px -2px 34px 1px rgba(51,51,51,0.75) inset;
+    filter: drop-shadow(6px 2px 2px #000);
 }
 .type-box{
     display:flex;
@@ -77,10 +115,15 @@ body{
 }
 .type{
     font-size: 11px;
+    width: 50px;
+    height: 12px;
+    text-align: center;
     color:antiquewhite;
-    margin: 4px;
+    margin: 0 0 7px 7px;
     padding: 3px;
     border-radius: 5px;
+    text-shadow: 3px 2px 2px #000000;
+    box-shadow: 4px 3px 2px #000;
 }
 .type:hover{
     cursor:pointer;
@@ -95,16 +138,16 @@ body{
     background-color: rgb(219, 57, 17);
 }
 .type[pokemon-type='flying']{
-    background-color: rgb(139, 57, 194);
+    background-color: rgb(171, 84, 230);
 }
 .type[pokemon-type='water']{
     background-color: rgb(78, 67, 235);
 }
 .type[pokemon-type='bug']{
-    background-color: rgb(71, 214, 35);
+    background-color: rgb(105, 253, 7);
 }
 .type[pokemon-type='normal']{
-    background-color: rgb(133, 143, 133);
+    background-color: rgb(88, 90, 88);
 }
 .type[pokemon-type='electric']{
     background-color: rgb(248, 225, 14);
@@ -122,7 +165,7 @@ body{
     background-color: rgb(212, 10, 152);
 }
 .type[pokemon-type='rock']{
-    background-color: rgb(185, 157, 134);
+    background-color: rgb(112, 90, 72);
 }
 .type[pokemon-type='ice']{
     background-color: rgb(56, 199, 180);
@@ -136,15 +179,25 @@ body{
 .type[pokemon-type='dark']{
     background-color: rgb(38, 44, 38);
 }
+.type[pokemon-type='steel']{
+    background-color: rgb(162, 163, 162);
+}
  .mew{
     position: relative;
 }
 
+.typebuttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    list-style: none;
+}
 .noPokemonFound{
     color:antiquewhite;
 }
 .truck{
-    height: 172px;
+    height: 182px;
     background-color: rgb(87, 85, 85);
     width: 199px;
     position:absolute;
